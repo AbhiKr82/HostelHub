@@ -38,16 +38,10 @@ import com.example.hostelhubuser.R
 @Composable
 fun ProfileScreen(hostelViewModel: HostelViewModel, navController: NavController) {
 
-    val uid = hostelViewModel.getId()
+
     // Observe student data using LiveData in Compose
     val studentData by hostelViewModel.studentData.observeAsState()
 
-    // Fetch user data when HomeScreen loads
-    LaunchedEffect(uid) {
-        if (uid != null) {
-            hostelViewModel.getUserData(uid)
-        }
-    }
     Scaffold (
         topBar = { TopAppBar(title = { Text("Profile") }) }
     )

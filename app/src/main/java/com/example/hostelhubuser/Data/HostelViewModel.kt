@@ -22,10 +22,11 @@ class HostelViewModel : ViewModel() {
 
     val authState : LiveData<AuthState> = _authState
 
+    var userid:String=""
+
     init {
         CheckAuthStatus()
-        getId()
-
+        userid= getId().toString()
     }
 
     fun CheckAuthStatus(){
@@ -47,6 +48,7 @@ class HostelViewModel : ViewModel() {
             .addOnCompleteListener{task->
                 if(task.isSuccessful){
                     _authState.value=AuthState.Authenticated
+                    userid= getId().toString()
                 }else{
                     _authState.value=AuthState.Error(task.exception?.message?:"Something went Wrong")
                 }
@@ -76,6 +78,7 @@ class HostelViewModel : ViewModel() {
                         number = number
                     )
                     addStudent(student)
+                    userid= getId().toString()
                 }
                 else{
                     _authState.value=AuthState.Error("Something went Wrong")
@@ -157,7 +160,7 @@ class HostelViewModel : ViewModel() {
     val complainRef = database.getReference(Complain)
 
     fun addComplain(name: String, number: String, topic: String, description: String) {
-        var id = getId()
+        var id = userid
         if (id != null) {
 
 
@@ -170,8 +173,6 @@ class HostelViewModel : ViewModel() {
             )
 
 
-            // Push a new complaint to the "complains" list in Firebase
-            // complainRef.push().setValue(complain)
             complainRef.child(id).push().setValue(complain)
 
         }

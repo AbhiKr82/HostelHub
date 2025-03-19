@@ -105,7 +105,6 @@ fun LoginScreen(navController: NavController,hostelViewModel: HostelViewModel) {
 
             Spacer(Modifier.height(20.dp))
             TextButton(onClick = {
-
                 navController.navigate(com.example.hostelhubuser.SignupScreen)
             }) {
                 Text("Don't have an account , SignUp")

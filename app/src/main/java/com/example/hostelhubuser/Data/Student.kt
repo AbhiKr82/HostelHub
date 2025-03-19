@@ -13,8 +13,5 @@ data class Student(
     var hostelName: String? = "",
     var roomNo: String? = "",
     var gender: String? = ""
-) {
-    // Explicit no-argument constructor required for Firebase deserialization
-    constructor() : this("", "", "", "", "", "", "", "", "", "", "", "")
-}
+)
 
