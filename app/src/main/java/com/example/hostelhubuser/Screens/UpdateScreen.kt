@@ -152,12 +152,7 @@ fun UpdateScreen(hostelViewModel: HostelViewModel, navController: NavController)
                 label = { Text("Parent Number") },
                 modifier = Modifier.fillMaxWidth()
             )
-            OutlinedTextField(
-                value = hostelName,
-                onValueChange = { hostelName = it },
-                label = { Text("Hostel Name") },
-                modifier = Modifier.fillMaxWidth()
-            )
+
 
             Spacer(Modifier.height(15.dp))
             Box(

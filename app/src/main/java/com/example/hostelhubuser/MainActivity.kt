@@ -25,6 +25,8 @@ import com.example.hostelhubuser.Screens.RoomAllocationScreen
 import com.example.hostelhubuser.Screens.SignupScreen
 import com.example.hostelhubuser.Screens.UpdateScreen
 import com.example.hostelhubuser.Screens.complainScreen
+import com.example.hostelhubuser.Screens.complainpage
+import com.example.hostelhubuser.Screens.preCompScreen
 import com.example.hostelhubuser.ui.theme.HostelHubUserTheme
 
 class MainActivity : ComponentActivity() {
@@ -71,6 +73,12 @@ fun Navigation(modifier: Modifier=Modifier,hostelViewModel: HostelViewModel){
         }
         composable(managementScreen){
             Management(navController)
+        }
+        composable(complainPage){
+            complainpage(navController,hostelViewModel)
+        }
+        composable(precomplain){
+            preCompScreen(navController,hostelViewModel)
         }
 
     })

@@ -1,17 +1,15 @@
 package com.example.hostelhubuser.Data
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.hostelhubuser.Complain
-import com.example.hostelhubuser.hostel
-import com.example.hostelhubuser.student
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import kotlin.math.log
-
+import com.google.firebase.database.ValueEventListener
 
 
 class HostelViewModel : ViewModel() {
@@ -27,6 +25,7 @@ class HostelViewModel : ViewModel() {
     init {
         CheckAuthStatus()
         userid= getId().toString()
+
     }
 
     fun CheckAuthStatus(){
@@ -177,6 +176,46 @@ class HostelViewModel : ViewModel() {
 
         }
     }
+
+    // new code
+    private val _complaints = MutableLiveData<List<Complain>>()
+    val complaints: LiveData<List<Complain>> get() = _complaints
+
+
+    fun getComplain() {
+        complainRef.child(userid) // Access the correct user node
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val complaintsList = mutableListOf<Complain>()
+                    for (complainSnapshot in snapshot.children) {
+                        try {
+                            val complainMap = complainSnapshot.value as? Map<String, Any>
+                            if (complainMap != null) {
+                                val complain = Complain(
+                                    sid = complainMap["sid"] as? String ?: "",
+                                    name = complainMap["name"] as? String ?: "",
+                                    number = complainMap["number"] as? String ?: "",
+                                    topic = complainMap["topic"] as? String ?: "",
+                                    desc = complainMap["desc"] as? String ?: "",
+                                    resolved = complainMap["resolved"] as? Boolean?:false
+                                )
+                                complaintsList.add(complain)
+                            }
+                        } catch (e: Exception) {
+                            Log.e("ComplainViewModel", "Data mapping error: ${e.message}")
+                        }
+                    }
+                    _complaints.postValue(complaintsList)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("ComplainViewModel", "Error fetching complaints: ${error.message}")
+                }
+            })
+    }
+
+
+
 
 }
 

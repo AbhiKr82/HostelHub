@@ -9,10 +9,11 @@ val ProfileScren="profileScreen"
 val UpdateScreen="updateScreen"
 val RoomAllocation="RoomAllocation"
 val complainScreen="complainScreen"
+val complainPage="complainPage"
+val precomplain="precomplain"
 val managementScreen="Management"
 
 const val  Complain="Complain"
-const val  hostel="Student"
 const val  student="Hostel"
 
 

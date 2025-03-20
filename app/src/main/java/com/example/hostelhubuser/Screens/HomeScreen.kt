@@ -261,7 +261,7 @@ fun HomeScreen(
                             .height(250.dp)
                             .width(180.dp)
                             .clickable {
-                                navController.navigate(com.example.hostelhubuser.complainScreen)
+                                navController.navigate(com.example.hostelhubuser.complainPage)
                                 studentData?.id?.let { Log.d("Login", it) }
                             }
                             .background(

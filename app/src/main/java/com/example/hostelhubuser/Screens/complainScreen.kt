@@ -68,10 +68,18 @@ fun complainScreen(hostelViewModel: HostelViewModel,navController: NavController
         Spacer(Modifier.height(20.dp))
         Button(
             onClick = {
-                hostelViewModel.addComplain(name = name.toString(),number.toString(), topic = topic, description = desc)
-                navController.navigate(com.example.hostelhubuser.HomeScreen){
-                    popUpTo(0)
+                if (topic.isNotEmpty() && desc.isNotEmpty()) {
+                    hostelViewModel.addComplain(
+                        name = name.toString(),
+                        number.toString(),
+                        topic = topic,
+                        description = desc
+                    )
+                    navController.navigate(com.example.hostelhubuser.complainPage){
+                        popUpTo(0)
+                    }
                 }
+
 
             },
             modifier = Modifier.height(40.dp).width(150.dp),
@@ -81,7 +89,7 @@ fun complainScreen(hostelViewModel: HostelViewModel,navController: NavController
         }
         Spacer(Modifier.height(10.dp))
         TextButton(
-            onClick = {navController.navigate(com.example.hostelhubuser.HomeScreen)},
+            onClick = {navController.navigateUp()},
 
         ) {
             Text("CANCEL")

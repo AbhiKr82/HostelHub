@@ -6,5 +6,5 @@ data class Complain(
     var number:String="",
     var topic:String="",
     var desc:String="",
-    var resolved:String=""
+    var resolved:Boolean=false
 )
