@@ -14,7 +14,7 @@ val precomplain="precomplain"
 val managementScreen="Management"
 
 const val  Complain="Complain"
-const val  student="Hostel"
+const val  hostel="Hostel"
 
 
 

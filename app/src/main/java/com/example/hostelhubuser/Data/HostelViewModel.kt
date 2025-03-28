@@ -1,10 +1,12 @@
 package com.example.hostelhubuser.Data
 
+import android.app.role.RoleManager
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.hostelhubuser.Complain
+import com.example.hostelhubuser.hostel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -129,7 +131,9 @@ class HostelViewModel : ViewModel() {
             .addOnSuccessListener { snapshot ->
                 _studentData.value = snapshot.getValue(Student::class.java)
             }
-            .addOnFailureListener {
+            .addOnFailureListener { exception->
+                Log.e("Login", "Failed to get data for $uid", exception)
+//                Log.d("Login","failed to get data " + uid)
                 _studentData.value = null
             }
     }
@@ -148,12 +152,6 @@ class HostelViewModel : ViewModel() {
         }
     }
 
-    // Room Allocation
-    val RoomRef = database.getReference("Hostel")
-
-    fun giveRoom(hostel: Hostel) {
-        RoomRef.child(hostel.Name).setValue(hostel)
-    }
 
 
     val complainRef = database.getReference(Complain)
@@ -213,6 +211,46 @@ class HostelViewModel : ViewModel() {
                 }
             })
     }
+
+
+    // Room Allocation
+    val RoomRef = database.getReference(hostel)
+
+
+
+    fun createHostels() {
+        // Create rooms for one floor
+        fun createFloor(floorNum: Int): floor {
+            val rooms = mutableListOf<Room>()
+            for (i in 1..32) {
+                rooms.add(
+                    Room(
+                        sid = "S${floorNum}${String.format("%02d", i)}",
+                        roomNo = (floorNum * 100) + i,
+                        occupied = false
+                    )
+                )
+            }
+            return floor(rooms)
+        }
+
+        // Create floors
+        val floors = mutableListOf<floor>()
+        for (i in 1..5) {
+            floors.add(createFloor(i))
+        }
+
+        // Create hostels
+        val boysHostel = Hostel("Boys Hostel", floors)
+        val girlsHostel = Hostel("Girls Hostel", floors)
+
+        // Save to Firebase
+        RoomRef.child("Boys Hostel").setValue(boysHostel)
+        RoomRef.child("Girls Hostel").setValue(girlsHostel)
+    }
+
+
+
 
 
 

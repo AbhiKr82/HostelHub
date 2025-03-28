@@ -74,9 +74,10 @@ fun HomeScreen(
 
     // Fetch user data when HomeScreen loads
     LaunchedEffect(uid) {
-        if (uid != null) {
-            hostelViewModel.getUserData(uid)
-        }
+        Log.d("Login",uid + " Hello hi b ")
+
+        hostelViewModel.getUserData(uid)
+
     }
     val authState = hostelViewModel.authState.observeAsState()
 
@@ -262,7 +263,8 @@ fun HomeScreen(
                             .width(180.dp)
                             .clickable {
                                 navController.navigate(com.example.hostelhubuser.complainPage)
-                                studentData?.id?.let { Log.d("Login", it) }
+                                studentData?.id?.let { Log.d("Login", it + " hEllo") }
+                                Log.d("Login","Not fetching" + uid)
                             }
                             .background(
                                 color = Color.LightGray,
@@ -278,7 +280,7 @@ fun HomeScreen(
                             Text("Post a")
                             Spacer(Modifier.height(10.dp))
                             Text(
-                                "Complaint",
+                                "Complain",
                                 fontSize = 25.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
