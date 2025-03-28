@@ -145,9 +145,11 @@ class HostelViewModel : ViewModel() {
             myRef.child(it).setValue(student)
                 .addOnSuccessListener {
                     // Handle success, maybe show a Toast or navigate back
+                    Log.d("Update","Updated Successfully")
                 }
                 .addOnFailureListener { exception ->
                     // Handle failure, maybe show an error message
+                    Log.d("Update","Not Updated Successfully")
                 }
         }
     }
@@ -226,7 +228,7 @@ class HostelViewModel : ViewModel() {
                 rooms.add(
                     Room(
                         sid = "S${floorNum}${String.format("%02d", i)}",
-                        roomNo = (floorNum * 100) + i,
+                        roomNo = ((floorNum) * 100) + i,
                         occupied = false
                     )
                 )
@@ -236,7 +238,7 @@ class HostelViewModel : ViewModel() {
 
         // Create floors
         val floors = mutableListOf<floor>()
-        for (i in 1..5) {
+        for (i in 0..5) {
             floors.add(createFloor(i))
         }
 
@@ -252,7 +254,49 @@ class HostelViewModel : ViewModel() {
 
 
 
+    // Hostel Allocation part
 
+    fun allocateRoom(hostelName: String, floor: Int, onResult: (Boolean, String) -> Unit) {
+        val floorRef = RoomRef.child(hostelName).child("floors").child(floor.toString()).child("room")
+        val studentId = userid
+        floorRef.get().addOnSuccessListener { snapshot ->
+            for (roomSnapshot in snapshot.children) {
+                val occupied = roomSnapshot.child("occupied").getValue(Boolean::class.java) ?: true
+                if (!occupied) {
+                    val roomNo = roomSnapshot.child("roomNo").getValue(Int::class.java) ?: -1
+                    val updates = mapOf(
+                        "sid" to studentId,
+                        "occupied" to true
+                    )
+
+                    roomSnapshot.ref.updateChildren(updates).addOnSuccessListener {
+
+                        val studentUpdates = mapOf(
+                            "hostelName" to hostelName,
+                            "roomNo" to roomNo.toString()
+                        )
+
+                        myRef.child(userid).updateChildren(studentUpdates).addOnSuccessListener {
+                            onResult(true, "Room $roomNo allocated successfully in $hostelName!")
+                            getUserData(userid)
+                        }.addOnFailureListener {
+                            onResult(false, "Room allocated but failed to update Student table.")
+                        }
+
+
+//
+//                        onResult(true, "Room $roomNo allocated successfully!")
+                    }.addOnFailureListener {
+                        onResult(false, "Failed to allocate room.")
+                    }
+                    return@addOnSuccessListener
+                }
+            }
+            onResult(false, "No available rooms on floor $floor.")
+        }.addOnFailureListener {
+            onResult(false, "Failed to fetch rooms.")
+        }
+    }
 
 
 }

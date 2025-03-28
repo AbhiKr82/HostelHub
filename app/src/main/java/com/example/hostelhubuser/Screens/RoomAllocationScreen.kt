@@ -1,5 +1,6 @@
 package com.example.hostelhubuser.Screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,29 +54,34 @@ fun RoomAllocationScreen(
     var floor by remember { mutableStateOf("Select Floor") }
 
 
-    var result by remember { mutableStateOf("Allocated") }
+    var result by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {Text("Get Your Room")},
+                title = { Text("Get Your Room") },
 
 
-            )
+                )
         }
-    ) {innerPadding ->
+    ) { innerPadding ->
 
         Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding).padding(10.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
+        ) {
 
             Spacer(Modifier.height(100.dp))
 
             Box(
-                modifier = Modifier.height(50.dp).width(250.dp)
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(250.dp)
                     .background(color = Color.LightGray, shape = RoundedCornerShape(2.dp))
-                    .clickable { expand1=true },
+                    .clickable { expand1 = true },
                 contentAlignment = Alignment.Center
 
             ) {
@@ -82,26 +89,27 @@ fun RoomAllocationScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.padding(10.dp)
                 ) {
-                    Icon(Icons.Default.ArrowDropDown,
+                    Icon(
+                        Icons.Default.ArrowDropDown,
                         contentDescription = "DropDown",
                         modifier = Modifier.size(40.dp)
                     )
                     Text(text = hostelName, fontSize = 25.sp, fontWeight = FontWeight.SemiBold)
                     DropdownMenu(
                         expanded = expand1,
-                        onDismissRequest = {expand1=false}
-                    ){
+                        onDismissRequest = { expand1 = false }
+                    ) {
                         DropdownMenuItem(
                             onClick = {
-                                hostelName="BOYS"
-                                expand1=false
+                                hostelName = "Boys Hostel"
+                                expand1 = false
                             },
                             text = { Text("BOYS") }
                         )
                         DropdownMenuItem(
                             onClick = {
-                                hostelName="GIRLS"
-                                expand1=false
+                                hostelName = "Girls Hostel"
+                                expand1 = false
                             },
                             text = { Text("GIRLS") }
                         )
@@ -111,9 +119,11 @@ fun RoomAllocationScreen(
 
             Spacer(Modifier.height(20.dp))
             Box(
-                modifier = Modifier.height(50.dp).width(250.dp)
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(250.dp)
                     .background(color = Color.LightGray, shape = RoundedCornerShape(2.dp))
-                    .clickable { expand2=true },
+                    .clickable { expand2 = true },
                 contentAlignment = Alignment.Center
 
             ) {
@@ -121,54 +131,55 @@ fun RoomAllocationScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.padding(10.dp)
                 ) {
-                    Icon(Icons.Default.ArrowDropDown,
+                    Icon(
+                        Icons.Default.ArrowDropDown,
                         contentDescription = "DropDown",
                         modifier = Modifier.size(40.dp)
                     )
                     Text(text = floor, fontSize = 25.sp, fontWeight = FontWeight.SemiBold)
                     DropdownMenu(
                         expanded = expand2,
-                        onDismissRequest = {expand2=false}
-                    ){
+                        onDismissRequest = { expand2 = false }
+                    ) {
                         DropdownMenuItem(
                             onClick = {
-                                floor="0"
-                                expand2=false
+                                floor = "0"
+                                expand2 = false
                             },
                             text = { Text("0") }
                         )
                         DropdownMenuItem(
                             onClick = {
-                                floor="1"
-                                expand2=false
+                                floor = "1"
+                                expand2 = false
                             },
                             text = { Text("1") }
                         )
                         DropdownMenuItem(
                             onClick = {
-                                floor="2"
-                                expand2=false
+                                floor = "2"
+                                expand2 = false
                             },
                             text = { Text("2") }
                         )
                         DropdownMenuItem(
                             onClick = {
-                                floor="3"
-                                expand2=false
+                                floor = "3"
+                                expand2 = false
                             },
                             text = { Text("3") }
                         )
                         DropdownMenuItem(
                             onClick = {
-                                floor="4"
-                                expand2=false
+                                floor = "4"
+                                expand2 = false
                             },
                             text = { Text("4") }
                         )
                         DropdownMenuItem(
                             onClick = {
-                                floor="5"
-                                expand2=false
+                                floor = "5"
+                                expand2 = false
                             },
                             text = { Text("5") }
                         )
@@ -180,19 +191,51 @@ fun RoomAllocationScreen(
 
             Spacer(Modifier.height(30.dp))
             Button(
-                onClick = {result="Not found"},
-                modifier = Modifier.height(40.dp).width(250.dp),
+
+                onClick = {
+                    val gender = hostelViewModel.studentData.value!!.gender
+                    if (gender == ""){
+                        result = "Update Your Profile first"
+                    }
+                    else if (hostelViewModel.studentData.value?.roomNo == "" && hostelName != "Select Hostel" && floor != "Select Floor") {
+                        if ((gender == "Male" && hostelName == "Boys Hostel") || (gender == "Female" && hostelName == "Girls Hostel")) {
+                            hostelViewModel.allocateRoom(
+                                hostelName = hostelName,
+                                floor = floor.toInt()
+                            ) { success, message ->
+                                if (success) {
+                                    result = message
+                                    Log.d("HostelAllocation", message)
+                                } else {
+                                    result = "No rooms available on that floor"
+                                    Log.d("HostelAllocation", message)
+                                }
+                            }
+                        }else{
+                            result = "Cannot allocate ${hostelName} to ${hostelViewModel.studentData.value!!.gender}"
+                        }
+                    }else if (hostelViewModel.studentData.value?.roomNo != ""){
+                        result = "You already have a room \n Contact Warden for room change"
+                    }else{
+                        result = "Select Hostel Name and Floor"
+                    }
+
+                },
+                modifier = Modifier
+                    .height(40.dp)
+                    .width(250.dp),
                 shape = RoundedCornerShape(2.dp)
             ) {
                 Text("SEARCH")
             }
 
             Spacer(Modifier.height(20.dp))
-            Text(text = "Result --> ${result}")
+            if (result != "")
+                Text(text = "${result}")
 
             Spacer(Modifier.height(20.dp))
             TextButton(
-                onClick = {navController.navigate(com.example.hostelhubuser.HomeScreen)}
+                onClick = { navController.navigate(com.example.hostelhubuser.HomeScreen) }
             ) {
                 Text("Home")
             }

@@ -1,5 +1,6 @@
 package com.example.hostelhubuser.Screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -66,11 +67,11 @@ fun UpdateScreen(hostelViewModel: HostelViewModel, navController: NavController)
     fun saveUpdatedData() {
         // Check if all fields are non-empty
         if (name.isEmpty() || number.isEmpty() || department.isEmpty() || year.isEmpty() ||
-            degree.isEmpty() || parentName.isEmpty() || parentNumber.isEmpty() ||
-            hostelName.isEmpty() || gender.isEmpty()) {
+            degree.isEmpty() || parentName.isEmpty() || parentNumber.isEmpty()|| gender.isEmpty()) {
             // Show a message to the user (you can use Toast or any UI component for this)
             // For now, just a simple text log
             //println("All fields must be filled.")
+
             return
         }
 
@@ -90,9 +91,11 @@ fun UpdateScreen(hostelViewModel: HostelViewModel, navController: NavController)
 
         // Save the updated student data to Firebase
         updatedStudent?.let {
-            hostelViewModel.updateStudentData(it) // Assuming this method handles the update in your ViewModel
 
+            hostelViewModel.updateStudentData(it) // Assuming this method handles the update in your ViewModel
+            Log.d("Update details","Updated Successfully")
         }
+        Log.d("Update details","Not Updated Successfully")
     }
 
     Column(modifier = Modifier.fillMaxSize(),
@@ -203,6 +206,7 @@ fun UpdateScreen(hostelViewModel: HostelViewModel, navController: NavController)
                 }
                 TextButton(
                     onClick = {
+                        Log.d("Update details","Clicking")
                         saveUpdatedData()
                         navController.navigate(com.example.hostelhubuser.HomeScreen)}
                 ) {

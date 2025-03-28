@@ -12,6 +12,6 @@ data class Student(
     var parentNumber: String? = "",
     var hostelName: String? = "",
     var roomNo: String? = "",
-    var gender: String? = ""
+    var gender: String = ""
 )
 

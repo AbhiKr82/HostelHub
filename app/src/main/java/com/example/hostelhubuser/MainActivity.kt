@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val hostelViewModel = ViewModelProvider(this)[HostelViewModel::class.java]
-        hostelViewModel.createHostels()
+//        hostelViewModel.createHostels()
         setContent {
             HostelHubUserTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
