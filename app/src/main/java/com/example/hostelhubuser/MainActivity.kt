@@ -20,6 +20,7 @@ import com.example.hostelhubuser.Data.HostelViewModel
 import com.example.hostelhubuser.Screens.HomeScreen
 import com.example.hostelhubuser.Screens.LoginScreen
 import com.example.hostelhubuser.Screens.Management
+import com.example.hostelhubuser.Screens.NotificationScreen
 import com.example.hostelhubuser.Screens.ProfileScreen
 import com.example.hostelhubuser.Screens.RoomAllocationScreen
 import com.example.hostelhubuser.Screens.SignupScreen
@@ -75,11 +76,11 @@ fun Navigation(modifier: Modifier=Modifier,hostelViewModel: HostelViewModel){
         composable(managementScreen){
             Management(navController)
         }
-        composable(complainPage){
-            complainpage(navController,hostelViewModel)
-        }
         composable(precomplain){
             preCompScreen(navController,hostelViewModel)
+        }
+        composable(annuncementScreen){
+            NotificationScreen(navController,hostelViewModel)
         }
 
     })

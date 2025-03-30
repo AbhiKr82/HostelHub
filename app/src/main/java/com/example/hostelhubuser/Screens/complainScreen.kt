@@ -75,7 +75,7 @@ fun complainScreen(hostelViewModel: HostelViewModel,navController: NavController
                         topic = topic,
                         description = desc
                     )
-                    navController.navigate(com.example.hostelhubuser.complainPage){
+                    navController.navigate(com.example.hostelhubuser.HomeScreen){
                         popUpTo(0)
                     }
                 }

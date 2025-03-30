@@ -1,17 +1,18 @@
 package com.example.hostelhubuser.Data
 
-import android.app.role.RoleManager
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.hostelhubuser.Complain
 import com.example.hostelhubuser.hostel
+import com.example.hostelhubuser.notification
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.time.LocalDate
 
 
 class HostelViewModel : ViewModel() {
@@ -296,6 +297,66 @@ class HostelViewModel : ViewModel() {
         }.addOnFailureListener {
             onResult(false, "Failed to fetch rooms.")
         }
+    }
+
+
+//    Notification
+
+    val notref=database.getReference(notification)
+
+
+    fun addNotification(message: String, hostels: String) {
+        val notificationId = notref.push().key // Generate unique ID
+        if (notificationId != null) {
+            val notification = Notification(
+                date = LocalDate.now().toString(), // Set current date
+                id = notificationId,
+                message = message,
+                hostels = hostels
+            )
+
+            notref.child(notificationId).setValue(notification)
+                .addOnSuccessListener {
+                    Log.d("Firebase", "Notification added successfully!")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Firebase", "Failed to add notification", e)
+                }
+        }
+    }
+
+    private val _notifications = MutableLiveData<List<Notification>>()
+    val notifications: LiveData<List<Notification>> get() = _notifications
+
+
+
+    fun getNotifications() {
+        notref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val notificationList = mutableListOf<Notification>()
+                for (notificationSnapshot in snapshot.children) {
+                    try {
+                        val notificationMap = notificationSnapshot.value as? Map<String, Any>
+                        if (notificationMap != null) {
+                            val notification = Notification(
+                                id = notificationMap["id"] as? String ?: "",
+                                date = notificationMap["date"] as? String ?: LocalDate.now().toString(),
+                                message = notificationMap["message"] as? String ?: "",
+                                hostels = notificationMap["hostels"] as? String ?: ""
+                            )
+                            notificationList.add(notification)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("NotificationViewModel", "Data mapping error: ${e.message}")
+                    }
+                }
+                _notifications.postValue(notificationList)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("NotificationViewModel", "Error fetching notifications: ${error.message}")
+            }
+        })
     }
 
 

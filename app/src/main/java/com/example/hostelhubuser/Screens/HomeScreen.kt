@@ -38,12 +38,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -51,10 +49,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.hostelhubuser.Data.AuthState
 import com.example.hostelhubuser.Data.HostelViewModel
+import com.example.hostelhubuser.Data.Notification
 import com.example.hostelhubuser.ProfileScren
 import com.example.hostelhubuser.R
 import com.example.hostelhubuser.RoomAllocation
+import com.example.hostelhubuser.annuncementScreen
 import com.example.hostelhubuser.managementScreen
+import com.example.hostelhubuser.notification
+import com.example.hostelhubuser.precomplain
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 
@@ -74,7 +76,7 @@ fun HomeScreen(
 
     // Fetch user data when HomeScreen loads
     LaunchedEffect(uid) {
-        Log.d("Login",uid + " Hello hi b ")
+        //Log.d("Login", uid + " Hello hi b ")
 
         hostelViewModel.getUserData(uid)
 
@@ -82,7 +84,7 @@ fun HomeScreen(
     val authState = hostelViewModel.authState.observeAsState()
 
     LaunchedEffect(authState.value) {
-        when(authState.value){
+        when (authState.value) {
             is AuthState.UnAuthenticated -> navController.navigate(com.example.hostelhubuser.LoginScreen)
             else -> Unit
         }
@@ -95,9 +97,9 @@ fun HomeScreen(
     // Determine the greeting message based on the hour of the day
     val greeting = when (currentTime.hour) {
         in 5..11 -> "Good Morning"
-        in 12..19 -> "Good Afternoon"
+        in 12..16 -> "Good Afternoon"
         in 20..23 -> "Good Night"
-        in 0..4 -> "Soo ja maaderchod"
+        in 0..4 -> " "
         else -> "Good Evening"
     }
 
@@ -179,22 +181,22 @@ fun HomeScreen(
                     )
 
                     // Room change request
-                    NavigationDrawerItem(
-                        icon = {
-                            Icon(
-                                painterResource(R.drawable.baseline_bedroom_child_24),
-                                contentDescription = "Bed"
-                            )
-                        },
-                        label = { Text("Room Change Request") },
-                        selected = false,
-                        onClick = {
-                            scope.launch { drawerState.close() }
-
-
-                        },
-                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                    )
+//                    NavigationDrawerItem(
+//                        icon = {
+//                            Icon(
+//                                painterResource(R.drawable.baseline_bedroom_child_24),
+//                                contentDescription = "Bed"
+//                            )
+//                        },
+//                        label = { Text("Room Change Request") },
+//                        selected = false,
+//                        onClick = {
+//                            scope.launch { drawerState.close() }
+//
+//
+//                        },
+//                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+//                    )
 
                     // Sign Out
                     NavigationDrawerItem(
@@ -259,12 +261,13 @@ fun HomeScreen(
                 ) {
                     Box(
                         modifier = Modifier
-                            .height(250.dp)
+                            .height(200.dp)
                             .width(180.dp)
                             .clickable {
-                                navController.navigate(com.example.hostelhubuser.complainPage)
-                                studentData?.id?.let { Log.d("Login", it + " hEllo") }
-                                Log.d("Login","Not fetching" + uid)
+                                navController.navigate(com.example.hostelhubuser.complainScreen)
+                                //navController.navigate(com.example.hostelhubuser.complainPage)
+                                //studentData?.id?.let { Log.d("Login", it + " hEllo") }
+                                //Log.d("Login","Not fetching" + uid)
                             }
                             .background(
                                 color = Color.LightGray,
@@ -313,7 +316,75 @@ fun HomeScreen(
                         }
                     }
                 }
+
+                Spacer(Modifier.height(20.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 10.dp, end = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                )
+                {
+                    Box(
+                        modifier = Modifier
+                            .height(200.dp)
+                            .width(180.dp)
+                            .clickable {
+                                navController.navigate(precomplain)
+                                // new code
+                                hostelViewModel.getComplain()
+                            }
+                            .background(
+                                color = Color.LightGray,
+                                shape = RoundedCornerShape(10.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column {
+                            Text("View Your")
+                            Text(
+                                text = "Past Complain", fontSize = 20.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .height(200.dp)
+                            .width(180.dp)
+                            .clickable {
+                                //addnote(hostelViewModel)
+                                navController.navigate(annuncementScreen)
+
+                            }
+                            .background(
+                                color = Color.LightGray,
+                                shape = RoundedCornerShape(10.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column {
+                            Image(
+                                painter = painterResource(R.drawable.announce),
+                                contentDescription = "",
+                                modifier = Modifier.size(100.dp)
+                            )
+                            Text(
+                                text = "Announcement", fontSize = 15.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+
+                    }
+                }
             }
         }
     }
+}
+
+fun addnote(hostelViewModel: HostelViewModel){
+    hostelViewModel.addNotification("Water problem during 10-12 today ","Boys Hostel")
+    hostelViewModel.addNotification("Barber has come to Boys hostel","Boys Hostel")
 }
